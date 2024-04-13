@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.*;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -223,7 +224,30 @@ public class App {
         } else {
             cli.printHelp();
         }
-        return exitCode;
+        int interval = cli.getIntValue(CliParser.ARGUMENT.UPDATE_SLEEP_INTERVAL);
+        if (interval != 0 && cli.isUpdateOnly()) {
+            while ( true ) {
+                try {
+                    runUpdateOnly();
+                } catch (UpdateException ex) {
+                    LOGGER.error(ex.getMessage(), ex);
+                    return 8;
+                } catch (DatabaseException ex) {
+                    LOGGER.error(ex.getMessage(), ex);
+                    return 9;
+                } finally {
+                    settings.cleanup();
+                }
+                try {
+                    Thread.sleep( interval * 60 * 1000); // in milliseconds
+                } catch (InterruptedException e) {
+                    LOGGER.error("Thread interrupted", e);
+                    return 10;
+                }
+            }
+        } else {
+            return exitCode;
+        }
     }
 
     /**

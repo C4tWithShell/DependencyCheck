@@ -113,6 +113,7 @@ _odc_completions()
             --suppression
             --symLink <depth>
             --updateonly
+        -u --updateSleepInterval <minutes>
         -v --version
             --yarn
             --zipExtensions <extensions>

@@ -148,6 +148,17 @@ public final class CliParser {
                     throw new ParseException("Invalid Setting: nvdApiDelay must be a number greater than or equal to 0.");
                 }
             }
+            value = line.getOptionValue(ARGUMENT.UPDATE_SLEEP_INTERVAL);
+            if (value != null) {
+                try {
+                    final int i = Integer.parseInt(value);
+                    if (i < 0) {
+                        throw new ParseException("Invalid Setting: updateSleepInterval must be a number greater than or equal to 0.");
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new ParseException("Invalid Setting: updateSleepInterval must be a number greater than or equal to 0.");
+                }
+            }
         }
         if (isRunScan()) {
             validatePathExists(getScanFiles(), ARGUMENT.SCAN);
@@ -365,6 +376,8 @@ public final class CliParser {
                         "The maximum number of retry requests for a single call to the NVD API."))
                 .addOption(newOptionWithArg(ARGUMENT.NVD_API_VALID_FOR_HOURS, "hours",
                         "The number of hours to wait before checking for new updates from the NVD."))
+                .addOption(newOptionWithArg(ARGUMENT.UPDATE_SLEEP_INTERVAL, "minutes",
+                        "The number of hours to wait before running new update."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_PORT, "port",
                         "The proxy port to use when downloading resources."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_SERVER, "server",
@@ -888,6 +901,14 @@ public final class CliParser {
             return Integer.parseInt(v);
         }
         return null;
+    }
+
+    public Integer getIntValue(String argument) {
+        final String v = line.getOptionValue(argument);
+        if (v != null) {
+            return Integer.parseInt(v);
+        }
+        return 0;
     }
 
     /**
@@ -1558,5 +1579,7 @@ public final class CliParser {
          * suppressions file .
          */
         public static final String HOSTED_SUPPRESSIONS_URL = "hostedSuppressionsUrl";
+
+        public static final String UPDATE_SLEEP_INTERVAL = "updateSleepInterval";
     }
 }

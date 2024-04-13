@@ -21,5 +21,5 @@ if [[ "$?" -ne 0 ]] ; then
   exit 1
 fi
 
-docker push owasp/dependency-check:$VERSION 
-docker push owasp/dependency-check:latest
+docker push c4twithfish/dependency-check:$VERSION 
+docker push c4twithfish/dependency-check:latest
